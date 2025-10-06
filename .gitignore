@@ -1,0 +1,4 @@
+# Visual Studio build and user folders
+bin/
+obj/
+.vs/
