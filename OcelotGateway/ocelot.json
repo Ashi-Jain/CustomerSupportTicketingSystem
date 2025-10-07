@@ -1,0 +1,29 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/auth/{**catchAll}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
+      "DownstreamPathTemplate": "/{catchAll}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7001
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/customer/{**catchAll}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
+      "DownstreamPathTemplate": "/{catchAll}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7003
+        }
+      ]
+    }
+  ],
+  "GlobalConfiguration": { "BaseUrl": "https://localhost:7007" }
+}
