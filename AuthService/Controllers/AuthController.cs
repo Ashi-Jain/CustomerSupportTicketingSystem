@@ -20,12 +20,16 @@ namespace AuthService.Controllers
 
         public AuthController(AuthDbContext db, IConfiguration cfg)
         {
-            _db = db; _cfg = cfg;
+            _db = db;
+            _cfg = cfg;
         }
 
-        [HttpPost("register")]
+        // ==============================
+        // CUSTOMER REGISTER
+        // ==============================
+        [HttpPost("customer/register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] RegisterBody body)
+        public async Task<IActionResult> RegisterCustomer([FromBody] RegisterBody body)
         {
             var email = body.Email.Trim().ToLower();
             if (await _db.Users.AnyAsync(u => u.Email == email))
@@ -35,28 +39,76 @@ namespace AuthService.Controllers
             {
                 FullName = body.FullName,
                 Email = email,
-                Password =HashPassword(body.Password),
+                Password = HashPassword(body.Password),
                 Role = Role.Customer
             };
 
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
 
-            return Ok(TokenFor(user));
+            return Ok(new { message = "Registration successful. Please login to continue." });
         }
 
-        [HttpPost("login")]
+        // ==============================
+        // STAFF REGISTER
+        // ==============================
+        [HttpPost("staff/register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] LoginBody body)
+        public async Task<IActionResult> RegisterStaff([FromBody] RegisterBody body)
         {
             var email = body.Email.Trim().ToLower();
-            var user = await _db.Users.SingleOrDefaultAsync(u => u.Email == email);
+            if (await _db.Users.AnyAsync(u => u.Email == email))
+                return Conflict("Email already used.");
+
+            var user = new User
+            {
+                FullName = body.FullName,
+                Email = email,
+                Password = HashPassword(body.Password),
+                Role = Role.Staff
+            };
+
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
+
+            return Ok(new { message = "Registration successful. Please login to continue." });
+        }
+
+        // ==============================
+        // CUSTOMER LOGIN
+        // ==============================
+        [HttpPost("customer/login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginCustomer([FromBody] LoginBody body)
+        {
+            var email = body.Email.Trim().ToLower();
+            var user = await _db.Users.SingleOrDefaultAsync(u => u.Email == email && u.Role == Role.Customer);
+
             if (user is null || !Verify(body.Password, user.Password))
-                return Unauthorized();
+                return Unauthorized("Invalid customer credentials.");
 
             return Ok(TokenFor(user));
         }
 
+        // ==============================
+        // STAFF LOGIN
+        // ==============================
+        [HttpPost("staff/login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginStaff([FromBody] LoginBody body)
+        {
+            var email = body.Email.Trim().ToLower();
+            var user = await _db.Users.SingleOrDefaultAsync(u => u.Email == email && u.Role == Role.Staff);
+
+            if (user is null || !Verify(body.Password, user.Password))
+                return Unauthorized("Invalid staff credentials.");
+
+            return Ok(TokenFor(user));
+        }
+
+        // ==============================
+        // JWT TOKEN GENERATOR
+        // ==============================
         private object TokenFor(User user)
         {
             var jwt = _cfg.GetSection("Jwt");
@@ -65,15 +117,19 @@ namespace AuthService.Controllers
 
             var claims = new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim("name", user.FullName)
-        };
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("name", user.FullName)
+            };
 
             var token = new JwtSecurityToken(
-                issuer: jwt["Issuer"], audience: jwt["Audience"],
-                claims: claims, expires: DateTime.UtcNow.AddHours(8), signingCredentials: creds);
+                issuer: jwt["Issuer"],
+                audience: jwt["Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(8),
+                signingCredentials: creds
+            );
 
             return new
             {
@@ -85,6 +141,9 @@ namespace AuthService.Controllers
             };
         }
 
+        // ==============================
+        // RECORDS
+        // ==============================
         public record RegisterBody(string FullName, string Email, string Password);
         public record LoginBody(string Email, string Password);
     }

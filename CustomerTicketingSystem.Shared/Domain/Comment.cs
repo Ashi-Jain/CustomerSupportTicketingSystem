@@ -14,5 +14,7 @@ namespace CustomerTicketingSystem.Shared.Domain
         public Ticket Ticket { get; set; } = default!;
 
         public int AuthorId { get; set; }
+
+        public Role AuthorRole { get; set; }
     }
 }

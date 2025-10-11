@@ -25,7 +25,12 @@ namespace CustomerService.Controllers
             if (t is null) return NotFound();
             if (t.CreatedById != CurrentUserId) return Forbid();
 
-            var c = new Comment { TicketId = ticketId, AuthorId = CurrentUserId, Message = body.Message };
+            var c = new Comment { 
+                TicketId = ticketId, 
+                AuthorId = CurrentUserId, 
+                Message = body.Message, 
+                AuthorRole = Role.Customer 
+            };
             _db.Comments.Add(c);
             t.UpdatedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();

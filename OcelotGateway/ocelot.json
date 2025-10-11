@@ -23,7 +23,20 @@
           "Port": 7003
         }
       ]
+    },
+    {
+      "UpstreamPathTemplate": "/staff/{**catchAll}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/{catchAll}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7005
+        }
+      ]
     }
+
   ],
   "GlobalConfiguration": { "BaseUrl": "https://localhost:7007" }
 }
