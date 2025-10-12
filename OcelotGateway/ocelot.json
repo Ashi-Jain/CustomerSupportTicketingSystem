@@ -1,10 +1,11 @@
 {
   "Routes": [
     {
-      "UpstreamPathTemplate": "/auth/{**catchAll}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
-      "DownstreamPathTemplate": "/{catchAll}",
-      "DownstreamScheme": "https",
+      // ✅ AUTH SERVICE
+      "UpstreamPathTemplate": "/auth/{catchAll}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS" ],
+      "DownstreamPathTemplate": "/api/auth/{catchAll}",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -13,10 +14,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/customer/{**catchAll}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
-      "DownstreamPathTemplate": "/{catchAll}",
-      "DownstreamScheme": "https",
+      // ✅ CUSTOMER SERVICE
+      "UpstreamPathTemplate": "/customer/{catchAll}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS" ],
+      "DownstreamPathTemplate": "/api/{catchAll}",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -25,10 +27,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/staff/{**catchAll}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DownstreamPathTemplate": "/{catchAll}",
-      "DownstreamScheme": "https",
+      // ✅ STAFF SERVICE
+      "UpstreamPathTemplate": "/staff/{catchAll}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "DownstreamPathTemplate": "/api/{catchAll}",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -36,7 +39,9 @@
         }
       ]
     }
-
   ],
-  "GlobalConfiguration": { "BaseUrl": "https://localhost:7007" }
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:7007",
+    "RequestIdKey": "OcRequestId"
+  }
 }
