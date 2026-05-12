@@ -40,19 +40,6 @@ Technology Stack:
 - Staff ticket management and commenting
 - Axios Interceptor for Authorization header
 
-# Folder Structure:
-customer-support-app/
-│
-├── src/
-│ ├── components/
-│ ├── context/
-│ ├── services/
-│ ├── pages/
-│ ├── App.js
-│ └── main.js
-│
-├── package.json
-
 # Overview
 The front end of the Customer Support Ticketing System is developed using React.js,
 providing a responsive, user-friendly interface for both customers and staff members.
