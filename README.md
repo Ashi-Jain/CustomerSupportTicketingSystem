@@ -9,20 +9,6 @@ The system is divided into independent microservices — AuthService, CustomerSe
 StaffService — all accessed via a central Ocelot API Gateway.
 The React.js front end interacts with the backend through REST APIs using Axios.
 
-# System Architecture
-React Frontend (Port 3000)
-↓
-Ocelot API Gateway (Port 7007)
-↓
-┌──────────────────────────────────────┐
-│ Microservices Layer
-│ AuthService (7001)
-│ CustomerService (7003)
-│ StaffService (7005)
-└──────────────────────────────────────┘
-↓
-SQL Server (CTS_MainDb)
-
 # Front-End (React.js)
 Technology Stack:
 - Framework: React.js (CRA)
